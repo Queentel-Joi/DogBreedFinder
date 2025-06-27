@@ -1,62 +1,147 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #f4f4f4;
-    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4; /* Light mode background */
+    color: #333; /* Light mode text color */
     text-align: center;
+    line-height: 1.6;
     transition: background-color 0.3s, color 0.3s;
-
 }
 
 h1 {
-    color: #0056b3;
-}
-
-.search-section {
+    color: #007bff;
     margin-bottom: 30px;
 }
 
+.controls-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.search-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
 #breedInput {
-    padding: 10px;
-    width: 250px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-right: 10px;
+    padding: 12px 15px;
+    width: 280px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
+}
+
+#breedInput:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
 }
 
 button {
-    padding: 10px 15px;
+    padding: 12px 20px;
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 1em;
-    margin: 5px; /* Add some margin for the buttons */
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.1s;
 }
 
 button:hover {
     background-color: #0056b3;
+    transform: translateY(-2px);
 }
+
+button:active {
+    transform: translateY(0);
+}
+
 
 .results-section {
     background-color: white;
     border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
+    border-radius: 12px;
+    padding: 30px;
     max-width: 600px;
     margin: 0 auto;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    display: none; /* Hidden initially, JavaScript will show it */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: none;
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 #breedImage {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
-    margin-top: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 #breedName {
     color: #007bff;
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.results-section p {
+    font-size: 1.1em;
+    color: #555;
+    margin: 8px 0;
+}
+
+
+#loadingSpinner {
+    display: none; /* Hidden by default */
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #007bff;
+    margin: 20px auto;
+}
+
+
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+body.dark-mode h1,
+body.dark-mode #breedName {
+    color: #87ceeb;
+}
+
+body.dark-mode .results-section {
+    background-color: #2b2b2b;
+    border-color: #444;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+body.dark-mode #breedInput {
+    background-color: #333;
+    color: #e0e0e0;
+    border-color: #555;
+}
+
+body.dark-mode button {
+    background-color: #87ceeb;
+    color: #1a1a1a;
+}
+
+body.dark-mode button:hover {
+    background-color: #6a9cc9;
+}
+
+body.dark-mode .results-section p {
+    color: #c0c0c0;
 }

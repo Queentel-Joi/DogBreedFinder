@@ -10,6 +10,7 @@ const breedLifespan = document.getElementById('breedLifespan');
 const breedOrigin = document.getElementById('breedOrigin');
 const resultsSection = document.querySelector('.results-section');
 const themeToggleButton = document.getElementById('themeToggleButton');
+const loadingSpinner = document.getElementById('loadingSpinner');
 
 
 
@@ -17,7 +18,6 @@ searchButton.addEventListener('click', searchBreed);
 
 
 randomButton.addEventListener('click', fetchRandomDog);
-
 
 themeToggleButton.addEventListener('click', toggleDarkMode);
 
@@ -30,27 +30,31 @@ async function searchBreed() {
         return;
     }
 
+
+    resultsSection.style.display = 'none';
+    loadingSpinner.style.display = 'block';
+
     try {
 
         const breedResponse = await fetch(`${API_URL}/breeds/search?q=${query}`);
         const breeds = await breedResponse.json();
 
+
         if (breeds.length === 0) {
             alert('Breed not found. Please try a different name.');
-            resultsSection.style.display = 'none';
             return;
         }
-
 
         const breed = breeds[0];
 
 
         const imageResponse = await fetch(`${API_URL}/images/search?breed_id=${breed.id}`);
         const images = await imageResponse.json();
+        
 
         const imageUrl = images.length > 0 ? images[0].url : 'https://via.placeholder.com/400x300?text=No+Image';
 
-
+        // Step C: Update the HTML elements with the fetched data
         breedName.textContent = breed.name;
         breedImage.src = imageUrl;
         breedImage.alt = breed.name;
@@ -58,50 +62,63 @@ async function searchBreed() {
         breedLifespan.textContent = `Lifespan: ${breed.life_span || 'N/A'}`;
         breedOrigin.textContent = `Origin: ${breed.origin || 'N/A'}`;
 
-
-        resultsSection.style.display = 'block';
-
     } catch (error) {
 
         console.error('Error fetching dog data:', error);
         alert('Failed to fetch dog data. Please check your network connection and try again.');
-        resultsSection.style.display = 'none';
+    } finally {
+
+        loadingSpinner.style.display = 'none';
+
+        if (breedName.textContent) {
+            resultsSection.style.display = 'block';
+        }
     }
 }
 
 
 async function fetchRandomDog() {
+
+    resultsSection.style.display = 'none';
+    loadingSpinner.style.display = 'block';
+
     try {
 
-        const response = await fetch(`${API_URL}/images/search?limit=1&has_breeds=1`);
-        const data = await response.json();
+        const breedsResponse = await fetch(`${API_URL}/breeds`);
+        const breeds = await breedsResponse.json();
 
-
-        if (data.length === 0 || !data[0].breeds || data[0].breeds.length === 0) {
-            alert('Could not fetch a random dog with breed info. Please try again.');
-            resultsSection.style.display = 'none';
+        if (breeds.length === 0) {
+            alert('Could not fetch the list of breeds. The API might be unavailable.');
             return;
         }
 
 
-        const randomDogImage = data[0];
-        const breed = randomDogImage.breeds[0];
+        const randomIndex = Math.floor(Math.random() * breeds.length);
+        const randomBreed = breeds[randomIndex];
 
 
-        breedName.textContent = breed.name;
-        breedImage.src = randomDogImage.url;
-        breedImage.alt = breed.name;
-        breedTemperament.textContent = `Temperament: ${breed.temperament || 'N/A'}`;
-        breedLifespan.textContent = `Lifespan: ${breed.life_span || 'N/A'}`;
-        breedOrigin.textContent = `Origin: ${breed.origin || 'N/A'}`;
+        const imageResponse = await fetch(`${API_URL}/images/search?breed_id=${randomBreed.id}`);
+        const images = await imageResponse.json();
+
+        const imageUrl = images.length > 0 ? images[0].url : 'https://via.placeholder.com/400x300?text=No+Image';
 
 
-        resultsSection.style.display = 'block';
+        breedName.textContent = randomBreed.name;
+        breedImage.src = imageUrl;
+        breedImage.alt = randomBreed.name;
+        breedTemperament.textContent = `Temperament: ${randomBreed.temperament || 'N/A'}`;
+        breedLifespan.textContent = `Lifespan: ${randomBreed.life_span || 'N/A'}`;
+        breedOrigin.textContent = `Origin: ${randomBreed.origin || 'N/A'}`;
 
     } catch (error) {
         console.error('Error fetching random dog:', error);
-        alert('Failed to fetch a random dog. Please try again later.');
-        resultsSection.style.display = 'none';
+        alert('Failed to fetch a random dog. Please check your network and try again.');
+    } finally {
+
+        loadingSpinner.style.display = 'none';
+        if (breedName.textContent) {
+            resultsSection.style.display = 'block';
+        }
     }
 }
 
@@ -109,7 +126,6 @@ async function fetchRandomDog() {
 function toggleDarkMode() {
 
     document.body.classList.toggle('dark-mode');
-
 
     if (document.body.classList.contains('dark-mode')) {
         localStorage.setItem('theme', 'dark');
@@ -119,7 +135,6 @@ function toggleDarkMode() {
         themeToggleButton.textContent = 'Toggle Dark Mode';
     }
 }
-
 
 function loadThemePreference() {
     const savedTheme = localStorage.getItem('theme');
@@ -133,6 +148,5 @@ function loadThemePreference() {
         themeToggleButton.textContent = 'Toggle Dark Mode';
     }
 }
-
 
 loadThemePreference();
